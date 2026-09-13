@@ -1,36 +1,89 @@
 @import "tailwindcss";
 
-/* Design tokens ("Sovereign Trust"): slate navy for text and primary actions,
-   terracotta for transactional accents, teal for anything verified. Use
-   `bg-brand`, `text-ink`, `text-verified`, `bg-surface` etc. rather than
-   hard-coded hex values. */
+/* Screen-shape variants: `short:` = landscape phones, `phone-portrait:` =
+   upright phones, `touch:` = phones in either orientation. */
+@custom-variant short (@media (max-height: 500px));
+@custom-variant phone-portrait (@media (orientation: portrait) and (max-width: 767px));
+@custom-variant touch (@media (pointer: coarse) and (max-width: 932px));
+
+/* Design tokens (Amberstone brand kit): Charcoal for text and dark actions,
+   Warm Amber for transactional accents, Forest for anything verified, on
+   Stone White grounds. Use `bg-brand`, `text-ink`, `text-verified`,
+   `bg-surface` etc. rather than hard-coded hex values. The Tailwind `amber`
+   and `emerald`/`teal` scales are remapped to the gold and forest ramps below
+   so utility classes stay on-palette too. */
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-fraunces), "Fraunces", Georgia, serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "Cascadia Mono", Consolas, monospace;
 
-  --color-brand: #d97706;
-  --color-brand-hover: #b45309;
-  --color-brand-soft: #fef3c7;
-  --color-champagne: #c9a66b;
-  --color-champagne-light: #fcd34d;
-  --color-champagne-dark: #b45309;
-  --color-cream: #faf7f0;
-  --color-cream-2: #f5f1e8;
-  --color-ink: #1a1a1f;
-  --color-ink-soft: #2e2e38;
-  --color-graphite: #3a3a44;
-  --color-smoke: #78716c;
-  --color-mist: #a8a29e;
-  --color-bone: #e7e5e0;
-  --color-muted: #64748b;
-  --color-hairline: #e2e8f0;
+  /* Amberstone master palette (brand kit). */
+  --color-gold: #a8875a;
+  --color-gold-light: #b49363;
+  --color-forest: #2f4a41;
+  --color-charcoal: #111318;
+  --color-stone: #f1eee9;
+
+  /* Brand is the deep end of Warm Amber so white button text passes AA. */
+  --color-brand: #8a6d45;
+  --color-brand-hover: #735a38;
+  --color-brand-soft: #f3ebdf;
+  --color-champagne: #b49363;
+  --color-champagne-light: #d4bb97;
+  --color-champagne-dark: #8a6d45;
+  --color-cream: #faf7f2;
+  --color-cream-2: #f1eee9;
+  --color-ink: #111318;
+  --color-ink-soft: #24272e;
+  --color-graphite: #3a3d42;
+  --color-smoke: #6b6f72;
+  --color-mist: #a3a3a0;
+  --color-bone: #e4e1dc;
+  --color-muted: #6b6f72;
+  --color-hairline: #e4e1dc;
   --color-surface: #faf9f6;
-  --color-surface-2: #f5f1e8;
-  --color-verified: #047857;
-  --color-verified-strong: #10b981;
-  --color-verified-soft: #d1fae5;
+  --color-surface-2: #f1eee9;
+  --color-verified: #2f4a41;
+  --color-verified-strong: #44705f;
+  --color-verified-soft: #d9e5e0;
+
+  /* Tailwind `amber-*` → Warm Amber ramp. */
+  --color-amber-50: #faf6f0;
+  --color-amber-100: #f3ebdf;
+  --color-amber-200: #e6d6bf;
+  --color-amber-300: #d4bb97;
+  --color-amber-400: #c1a176;
+  --color-amber-500: #b49363;
+  --color-amber-600: #a8875a;
+  --color-amber-700: #8a6d45;
+  --color-amber-800: #6e5637;
+  --color-amber-900: #54422b;
+  --color-amber-950: #33281a;
+
+  /* Tailwind `emerald-*` / `teal-*` → Forest ramp. */
+  --color-emerald-50: #eef3f1;
+  --color-emerald-100: #d9e5e0;
+  --color-emerald-200: #b5ccc3;
+  --color-emerald-300: #8aad9f;
+  --color-emerald-400: #5f8b7b;
+  --color-emerald-500: #44705f;
+  --color-emerald-600: #37594d;
+  --color-emerald-700: #2f4a41;
+  --color-emerald-800: #263c35;
+  --color-emerald-900: #1d2e29;
+  --color-emerald-950: #111c18;
+  --color-teal-50: #eef3f1;
+  --color-teal-100: #d9e5e0;
+  --color-teal-200: #b5ccc3;
+  --color-teal-300: #8aad9f;
+  --color-teal-400: #5f8b7b;
+  --color-teal-500: #44705f;
+  --color-teal-600: #37594d;
+  --color-teal-700: #2f4a41;
+  --color-teal-800: #263c35;
+  --color-teal-900: #1d2e29;
+  --color-teal-950: #111c18;
 }
 
 @layer base {
@@ -140,7 +193,7 @@
     border-radius: 9999px;
     background-color: var(--color-verified-soft);
     color: var(--color-verified);
-    box-shadow: inset 0 0 0 1px rgb(13 148 136 / 0.25);
+    box-shadow: inset 0 0 0 1px rgb(47 74 65 / 0.22);
     padding: 0.125rem 0.625rem;
     font-size: 0.75rem;
     font-weight: 600;
@@ -231,6 +284,15 @@
   0% { transform: scale(1); }
   50% { transform: scale(1.25); }
   100% { transform: scale(1); }
+}
+
+@keyframes twin-loader-slide {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(300%); }
+}
+
+.twin-loader-bar {
+  animation: twin-loader-slide 1.2s cubic-bezier(0.77, 0, 0.175, 1) infinite;
 }
 
 .animate-heart-pop {

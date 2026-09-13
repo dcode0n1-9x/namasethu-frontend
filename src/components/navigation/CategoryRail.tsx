@@ -71,7 +71,7 @@ export const CategoryRail: React.FC<CategoryRailProps> = ({
   const scrollBy = (direction: -1 | 1) => scrollRef.current?.scrollBy({ left: direction * 320, behavior: "smooth" });
 
   return (
-    <div className="sticky top-20 z-20 border-b border-hairline bg-white">
+    <div className="sticky top-20 z-20  bg-white">
       <div className="mx-auto flex max-w-[1760px] items-center gap-6 px-4 sm:px-8 md:px-12">
         <div className="relative min-w-0 flex-1">
           {canScrollLeft && (

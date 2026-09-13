@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { CurrencyProvider } from "@/context/CurrencyContext";
+import { LoadingProvider } from "@/context/LoadingContext";
+import { LuxuryPreloader } from "@/components/preloader/LuxuryPreloader";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta", display: "swap" });
@@ -9,12 +12,12 @@ const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", dis
 
 export const metadata: Metadata = {
   title: {
-    default: "Amberstone — India's Real Estate Operating System | Verified Direct Homes",
+    default: "Amberstone — Luxury Real Estate Operating System | Dubai Prime & Indian Metros",
     template: "%s · Amberstone",
   },
   description:
-    "Every home on Amberstone is owner-listed, inspected on-site by a civil engineer, authenticated with 3D digital twins, and title-checked against state land records. Zero brokerage, verified trust.",
-  keywords: "Amberstone, real estate operating system, verified property, zero brokerage, owner listed homes, civil engineer inspection, 3D digital twin, Bengaluru apartments, Mumbai luxury homes",
+    "Institutional-grade real estate operating system bridging Dubai Prime Freehold nodes and Indian Metros. 80-point civil inspection, cryptographic DLD title deed verification, Kaveri 2.0 land record indexing, and nodal escrow assurance.",
+  keywords: "Amberstone, real estate operating system, verified property, zero brokerage, owner listed homes, civil engineer inspection, 3D digital twin, Bengaluru apartments, Mumbai luxury homes, Dubai prime freehold, DLD title verification",
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -24,8 +27,8 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-touch-icon.png" }],
   },
   openGraph: {
-    title: "Amberstone — India's Real Estate Operating System",
-    description: "Verified homes directly from owners with 3D digital twins and cadastral deed authentication.",
+    title: "Amberstone — Luxury Real Estate Operating System",
+    description: "Where trust finds an address. Verified homes directly from owners with 3D digital twins and cadastral deed authentication.",
     siteName: "Amberstone",
   },
 };
@@ -42,7 +45,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jakarta.variable} ${jetbrains.variable} ${fraunces.variable}`}>
       <body className="min-h-screen bg-white font-sans text-ink antialiased selection:bg-amber-100 selection:text-amber-900">
-        {children}
+        <CurrencyProvider>
+          <LoadingProvider>
+            <LuxuryPreloader />
+            {children}
+          </LoadingProvider>
+        </CurrencyProvider>
       </body>
     </html>
   );

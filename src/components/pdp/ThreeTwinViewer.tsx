@@ -17,8 +17,10 @@ import {
   Footprints,
   Eye,
   Grid,
+  Smartphone,
 } from "lucide-react";
 import * as THREE from "three";
+import { BrandLoader } from "@/components/ui/BrandLoader";
 import { SpatialRoom } from "@/types/property";
 
 interface ThreeTwinViewerProps {
@@ -127,6 +129,12 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
   const [showMeasurements, setShowMeasurements] = useState<boolean>(true);
   const [isRotating, setIsRotating] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [isSceneReady, setIsSceneReady] = useState<boolean>(false);
+  const [sceneFailed, setSceneFailed] = useState<boolean>(false);
+  const [isPanoLoading, setIsPanoLoading] = useState<boolean>(false);
+  const [rotateDismissed, setRotateDismissed] = useState<boolean>(false);
+
+  const sectionRef = useRef<HTMLElement>(null);
   const [currentTourLabel, setCurrentTourLabel] = useState<string>("Approach · Facade");
   const [activePanoIndex, setActivePanoIndex] = useState<number>(0);
 
@@ -170,6 +178,45 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
       cameraControlRef.current.focusRoom("all");
     }
   };
+
+  // Fullscreen shows only the twin viewport (toolbar + scene), never the spec
+  // sheet underneath. Uses the native Fullscreen API when the browser allows
+  // it (and then asks phones to lock landscape), with the fixed overlay as
+  // the fallback.
+  const toggleFullscreen = () => {
+    if (!isFullscreen) {
+      setRotateDismissed(false);
+      sectionRef.current
+        ?.requestFullscreen?.()
+        .then(() => (screen.orientation as unknown as { lock?: (o: "landscape") => Promise<void> }).lock?.("landscape"))
+        .catch(() => {});
+    }
+    setIsFullscreen((v) => !v);
+  };
+
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsFullscreen(false);
+    };
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement) setIsFullscreen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+      (screen.orientation as unknown as { unlock?: () => void } | undefined)?.unlock?.();
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    };
+  }, [isFullscreen]);
+
+  // Phones explore the twin in landscape fullscreen; inline controls are hidden there.
+  const inlineTouchHidden = isFullscreen ? "" : "touch:hidden";
 
   const toggleTopDownCutaway = () => {
     const nextVal = !isTopDown;
@@ -645,6 +692,9 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
       });
       resizeObserver.observe(container);
 
+      // First frame is on screen — drop the loader.
+      requestAnimationFrame(() => setIsSceneReady(true));
+
       return () => {
         cancelAnimationFrame(animId);
         resizeObserver.disconnect();
@@ -660,6 +710,7 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
       };
     } catch (e) {
       console.error("ThreeTwinViewer initialization error:", e);
+      setSceneFailed(true);
     }
   }, []);
 
@@ -692,9 +743,15 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
       const sphereGeo = new THREE.SphereGeometry(500, 60, 40);
       sphereGeo.scale(-1, 1, 1);
 
+      setIsPanoLoading(true);
       const loader = new THREE.TextureLoader();
       const currentPano = PANO_ROOMS[activePanoIndex] || PANO_ROOMS[0];
-      const texture = loader.load(currentPano.image);
+      const texture = loader.load(
+        currentPano.image,
+        () => setIsPanoLoading(false),
+        undefined,
+        () => setIsPanoLoading(false),
+      );
       const sphereMat = new THREE.MeshBasicMaterial({ map: texture });
       const sphere = new THREE.Mesh(sphereGeo, sphereMat);
       scene.add(sphere);
@@ -778,34 +835,39 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
 
   return (
     <section
+      ref={sectionRef}
       aria-labelledby="tour-heading"
-      className={`rounded-3xl border border-hairline bg-cream overflow-hidden shadow-sm transition-all ${
-        isFullscreen ? "fixed inset-2 sm:inset-4 z-50 flex flex-col shadow-2xl bg-cream" : "relative"
+      className={`bg-cream overflow-hidden transition-all ${
+        isFullscreen ? "fixed inset-0 z-[100] flex flex-col" : "relative rounded-3xl border border-hairline shadow-sm"
       }`}
     >
       {/* Topbar / Header with Amberstone PRO Badge */}
-      <div className="flex flex-col gap-4 border-b border-bone px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-7">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-white shadow-sm">
-            <Layers className="h-5 w-5 text-amber-400" />
+      <div className="flex flex-col gap-4 border-b border-bone px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-7 short:flex-row short:items-center short:gap-3 short:px-3 short:py-2">
+        <div className="flex shrink-0 items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-white shadow-sm short:hidden">
+            <Layers className="h-5 w-5 text-gold-light" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 id="tour-heading" className="text-xl font-bold tracking-tight text-ink font-serif">
+              <h2 id="tour-heading" className="text-xl font-bold tracking-tight text-ink font-serif short:text-base">
                 3D Digital Twin
               </h2>
-              <span className="rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold tracking-wider text-ink uppercase">
+              <span className="rounded-full bg-gold px-2 py-0.5 text-[10px] font-bold tracking-wider text-white uppercase">
                 PRO
               </span>
             </div>
-            <p className="text-xs text-smoke mt-0.5">
+            <p className="text-xs text-smoke mt-0.5 short:hidden">
               {propertyTitle} · Cadastral &amp; Spatial Twin
             </p>
           </div>
         </div>
 
         {/* Toolbar Controls */}
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2" role="toolbar" aria-label="3D Twin modes">
+        <div
+          className={`no-scrollbar flex flex-wrap items-center gap-1.5 sm:gap-2 short:min-w-0 short:flex-nowrap short:gap-1.5 short:overflow-x-auto ${inlineTouchHidden}`}
+          role="toolbar"
+          aria-label="3D Twin modes"
+        >
           <ToolbarButton
             active={activeMode === "orbit"}
             onClick={() => setActiveMode("orbit")}
@@ -863,12 +925,28 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
           />
           <ToolbarButton
             active={isFullscreen}
-            onClick={() => setIsFullscreen((v) => !v)}
+            onClick={toggleFullscreen}
             icon={isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
             label={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
           />
         </div>
       </div>
+
+      {/* Phones in portrait: ask for landscape (orientation lock isn't available everywhere, e.g. iOS). */}
+      {isFullscreen && !rotateDismissed && (
+        <div className="absolute inset-0 z-[60] hidden flex-col items-center justify-center gap-4 bg-charcoal/95 px-8 text-center text-white phone-portrait:flex">
+          <Smartphone className="h-10 w-10 rotate-90 text-gold-light" aria-hidden="true" />
+          <p className="font-serif text-xl font-bold">Rotate your phone</p>
+          <p className="text-sm text-white/70">The 3D twin is best explored in landscape.</p>
+          <button
+            type="button"
+            onClick={() => setRotateDismissed(true)}
+            className="mt-2 rounded-full border border-white/25 px-4 py-2 text-xs font-semibold text-white/85 cursor-pointer"
+          >
+            Continue in portrait
+          </button>
+        </div>
+      )}
 
       {/* Main Viewport Container */}
       <div
@@ -885,11 +963,36 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
           role="img"
         />
 
+        {!isSceneReady && activeMode !== "plan" && activeMode !== "pano" && (
+          sceneFailed ? (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-stone px-6 text-center text-sm text-smoke">
+              The interactive 3D view isn&apos;t available on this device. Try the 2D CAD Plan or 360° Panorama.
+            </div>
+          ) : (
+            <BrandLoader label="Preparing digital twin" />
+          )
+        )}
+
+        {/* Phones: launch the twin in landscape fullscreen instead of fiddling inline. */}
+        {!isFullscreen && (
+          <div className="absolute inset-0 z-30 hidden flex-col items-center justify-center gap-2 bg-charcoal/35 touch:flex">
+            <button
+              type="button"
+              onClick={toggleFullscreen}
+              className="flex min-h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink shadow-lg cursor-pointer"
+            >
+              <Maximize2 className="h-4 w-4 text-gold" />
+              View in 3D
+            </button>
+            <p className="text-[11px] font-medium text-white/85">Opens full screen · best in landscape</p>
+          </div>
+        )}
+
         {/* 2. 2D Architectural CAD Floor Plan */}
         {activeMode === "plan" && (
-          <div className="flex h-full w-full items-center justify-center p-6 bg-cream-2 select-none overflow-hidden animate-fade-in">
-            <div className="relative w-full max-w-2xl rounded-2xl border-2 border-dashed border-bone bg-cream p-6 shadow-inner">
-              <div className="flex items-center justify-between border-b border-bone pb-3 mb-4">
+          <div className="flex h-full w-full items-center justify-center p-6 bg-cream-2 select-none overflow-hidden animate-fade-in short:items-start short:overflow-y-auto short:p-3 short:pb-16">
+            <div className="relative w-full max-w-2xl rounded-2xl border-2 border-dashed border-bone bg-cream p-6 shadow-inner short:max-w-sm short:p-3">
+              <div className="flex items-center justify-between border-b border-bone pb-3 mb-4 short:hidden">
                 <div>
                   <p className="text-xs uppercase tracking-widest text-mist font-semibold">Architectural CAD Blueprint</p>
                   <p className="text-lg font-bold text-ink font-serif">{propertyTitle}</p>
@@ -917,7 +1020,7 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
                   y="22"
                   width="156"
                   height="101"
-                  fill={activeRoomIndex === 0 ? "rgba(201, 166, 107, 0.2)" : "transparent"}
+                  fill={activeRoomIndex === 0 ? "rgba(168, 135, 90, 0.22)" : "transparent"}
                   className="transition-colors cursor-pointer"
                   onClick={() => handleSelectRoom(0)}
                 />
@@ -934,7 +1037,7 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
                   y="127"
                   width="156"
                   height="81"
-                  fill={activeRoomIndex === 1 ? "rgba(201, 166, 107, 0.2)" : "transparent"}
+                  fill={activeRoomIndex === 1 ? "rgba(168, 135, 90, 0.22)" : "transparent"}
                   className="transition-colors cursor-pointer"
                   onClick={() => handleSelectRoom(1)}
                 />
@@ -951,7 +1054,7 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
                   y="22"
                   width="196"
                   height="61"
-                  fill={activeRoomIndex === 2 ? "rgba(201, 166, 107, 0.2)" : "transparent"}
+                  fill={activeRoomIndex === 2 ? "rgba(168, 135, 90, 0.22)" : "transparent"}
                   className="transition-colors cursor-pointer"
                   onClick={() => handleSelectRoom(2)}
                 />
@@ -968,7 +1071,7 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
                   y="87"
                   width="96"
                   height="121"
-                  fill={activeRoomIndex === 3 ? "rgba(201, 166, 107, 0.2)" : "transparent"}
+                  fill={activeRoomIndex === 3 ? "rgba(168, 135, 90, 0.22)" : "transparent"}
                   className="transition-colors cursor-pointer"
                   onClick={() => handleSelectRoom(3)}
                 />
@@ -985,7 +1088,7 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
                   y="87"
                   width="96"
                   height="121"
-                  fill={activeRoomIndex === 4 ? "rgba(201, 166, 107, 0.2)" : "transparent"}
+                  fill={activeRoomIndex === 4 ? "rgba(168, 135, 90, 0.22)" : "transparent"}
                   className="transition-colors cursor-pointer"
                   onClick={() => handleSelectRoom(4)}
                 />
@@ -1001,7 +1104,7 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
                 <path d="M 180 50 A 25 25 0 0 1 205 75" fill="none" stroke="#A8A29E" strokeWidth="1" strokeDasharray="2,2" />
               </svg>
 
-              <div className="mt-4 flex items-center justify-between text-xs text-smoke pt-2 border-t border-bone">
+              <div className="mt-4 flex items-center justify-between text-xs text-smoke pt-2 border-t border-bone short:hidden">
                 <span>RERA Carpet Area: {carpetSqft} sqft (Efficiency: {efficiency}%)</span>
                 <span>Floor Height: {floorHeight} · Orientation: {orientation}</span>
               </div>
@@ -1013,8 +1116,9 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
         {activeMode === "pano" && (
           <div className="relative h-full w-full animate-fade-in">
             <div ref={panoContainerRef} className="h-full w-full" />
+            {isPanoLoading && <BrandLoader label="Loading 360° photosphere" />}
             <div className="absolute top-4 left-4 z-10 rounded-xl bg-ink/80 px-3.5 py-2 text-white backdrop-blur">
-              <p className="text-[10px] uppercase tracking-wider text-amber-400 font-semibold">
+              <p className="text-[10px] uppercase tracking-wider text-gold-light font-semibold">
                 360° Photosphere
               </p>
               <p className="text-sm font-medium">{PANO_ROOMS[activePanoIndex]?.name || "Room"} View</p>
@@ -1031,7 +1135,7 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
                   }}
                   className={`flex items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-semibold backdrop-blur transition-all cursor-pointer ${
                     idx === activePanoIndex
-                      ? "bg-amber-400 text-ink shadow-lg scale-105"
+                      ? "bg-gold text-white shadow-lg scale-105"
                       : "bg-ink/75 text-white hover:bg-ink"
                   }`}
                 >
@@ -1045,38 +1149,39 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
 
         {/* HUD: Active Room Details Callout */}
         {activeMode !== "plan" && activeRoomIndex >= 0 && (
-          <div className="absolute left-4 top-4 z-10 max-w-[260px] sm:max-w-xs rounded-2xl bg-white/95 p-3.5 sm:p-4 backdrop-blur shadow-md border border-white/60 animate-fade-in">
+          <div className="absolute left-4 top-4 z-10 max-w-[230px] sm:max-w-xs rounded-2xl bg-white/95 p-3.5 sm:p-4 backdrop-blur shadow-md border border-white/60 animate-fade-in short:left-3 short:top-3 short:max-w-[220px] short:p-2.5">
             <div className="flex items-center justify-between gap-3">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gold">
                 {activeMode === "tour" ? "Tour Waypoint" : "Spatial Room"}
               </span>
-              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+              <span className="rounded-full bg-forest/10 px-2 py-0.5 text-[10px] font-bold text-forest">
                 {activeRoom.carpetSqft} sq ft
               </span>
             </div>
             <p className="mt-1 text-base font-bold text-ink font-serif">
               {activeMode === "tour" ? currentTourLabel : activeRoom.name}
             </p>
-            <p className="text-xs text-smoke mt-0.5">
+            <p className="text-xs text-smoke mt-0.5 short:hidden">
               {activeRoom.dimensions} · {activeRoom.floorType}
             </p>
-            <p className="mt-2 border-t border-bone pt-2 text-[11px] text-muted line-clamp-2">
+            <p className="mt-2 border-t border-bone pt-2 text-[11px] text-muted line-clamp-2 short:hidden">
               {activeRoom.highlight}
             </p>
           </div>
         )}
 
         {/* HUD: Condition Score Badge */}
-        <div className="absolute right-4 top-4 z-10 flex items-center gap-3 rounded-2xl bg-ink/90 px-4 py-2.5 text-white backdrop-blur shadow-md">
+        <div className="absolute right-4 top-4 z-10 flex items-center gap-3 rounded-2xl bg-ink/90 px-3 py-2.5 text-white backdrop-blur shadow-md sm:px-4 short:right-3 short:top-3 short:py-1.5">
           <div className="text-right">
-            <span className="block font-serif text-2xl font-bold leading-none text-emerald-400">
+            <span className="block font-serif text-2xl font-bold leading-none text-gold-light short:text-xl">
               {conditionScore}
             </span>
             <span className="text-[9px] uppercase tracking-wider text-mist">/ 10 Score</span>
           </div>
-          <div className="border-l border-white/20 pl-3">
+          {/* Narrow and short screens: number only, so the badge never covers the room card. */}
+          <div className="hidden border-l border-white/20 pl-3 sm:block short:hidden">
             <div className="flex items-center gap-1 text-[11px] font-semibold text-white">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+              <ShieldCheck className="h-3.5 w-3.5 text-gold-light" />
               Verified Condition
             </div>
             <span className="text-[10px] text-mist">Zero Dampness</span>
@@ -1085,16 +1190,16 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
 
         {/* HUD: Interactive Measurement Callout */}
         {showMeasurements && activeMode !== "plan" && (
-          <div className="absolute left-4 bottom-20 z-10 flex items-center gap-2 rounded-xl bg-amber-400/95 px-3 py-1.5 text-xs font-semibold text-ink backdrop-blur shadow-md animate-fade-in">
-            <Ruler className="h-3.5 w-3.5" />
+          <div className={`absolute left-4 bottom-20 z-10 flex items-center gap-2 rounded-xl ${inlineTouchHidden} bg-charcoal/85 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur shadow-md animate-fade-in`}>
+            <Ruler className="h-3.5 w-3.5 text-gold-light" />
             <span>↔ 5.4m × ↕ 4.2m · 22.7 m² · Clear height {floorHeight}</span>
           </div>
         )}
 
         {/* HUD: Virtual Staging Status Badge */}
         {activeMode !== "plan" && (
-          <div className="absolute left-4 bottom-28 z-10 flex items-center gap-1.5 rounded-full bg-ink/80 px-3 py-1 text-[11px] font-medium text-white backdrop-blur shadow-sm">
-            <Sparkles className={`h-3 w-3 ${isStaged ? "text-amber-400" : "text-mist"}`} />
+          <div className={`absolute left-4 bottom-28 z-10 flex items-center gap-1.5 rounded-full bg-ink/80 px-3 py-1 text-[11px] font-medium text-white backdrop-blur shadow-sm ${inlineTouchHidden}`}>
+            <Sparkles className={`h-3 w-3 ${isStaged ? "text-gold-light" : "text-mist"}`} />
             <span>{isStaged ? "Furnished Designer Staging" : "Raw Structural Shell"}</span>
           </div>
         )}
@@ -1108,13 +1213,13 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
 
         {/* HUD: Room Switcher Bottom Carousel */}
         {activeMode !== "pano" && (
-          <div className="no-scrollbar absolute bottom-3 inset-x-0 z-10 flex justify-center items-center gap-1.5 px-4 overflow-x-auto">
+          <div className={`no-scrollbar absolute bottom-3 inset-x-0 z-10 ${inlineTouchHidden} flex justify-center items-center gap-1.5 px-4 overflow-x-auto`}>
             <button
               type="button"
               onClick={handleSelectWholeProperty}
               className={`flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium backdrop-blur transition-all cursor-pointer ${
                 activeRoomIndex === -1
-                  ? "bg-amber-400 text-ink shadow-md scale-105 font-bold"
+                  ? "bg-gold text-white shadow-md scale-105 font-bold"
                   : "bg-white/85 text-ink hover:bg-white"
               }`}
             >
@@ -1139,7 +1244,8 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
         )}
       </div>
 
-      {/* Architectural Specifications & Fixtures Breakdown */}
+      {/* Architectural Specifications & Fixtures Breakdown (hidden in fullscreen) */}
+      {!isFullscreen && (
       <div className="grid grid-cols-1 divide-y divide-bone border-t border-bone bg-cream lg:grid-cols-2 lg:divide-x lg:divide-y-0">
         {/* Left: Fixtures & Inclusions Checklist */}
         <div className="p-5 sm:p-7">
@@ -1164,7 +1270,7 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
                 <span
                   className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold shrink-0 ${
                     fix.included
-                      ? "bg-emerald-100 text-emerald-800"
+                      ? "bg-forest/10 text-forest"
                       : "bg-neutral-200 text-neutral-600"
                   }`}
                 >
@@ -1206,7 +1312,7 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
 
           <div className="mt-6 rounded-2xl bg-white/90 p-4 border border-bone">
             <div className="flex items-center gap-2 text-xs font-bold text-ink">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+              <ShieldCheck className="h-4 w-4 text-forest" />
               Amberstone 3D Digital Twin Certification
             </div>
             <p className="mt-1 text-[11px] text-smoke leading-relaxed">
@@ -1215,6 +1321,7 @@ export const ThreeTwinViewer: React.FC<ThreeTwinViewerProps> = ({
           </div>
         </div>
       </div>
+      )}
     </section>
   );
 };
@@ -1230,14 +1337,14 @@ const ToolbarButton: React.FC<{
     onClick={onClick}
     aria-pressed={active}
     title={label}
-    className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
+    className={`flex min-h-9 min-w-9 shrink-0 items-center justify-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold transition-all cursor-pointer sm:min-h-0 sm:px-3 short:min-h-9 short:px-2.5 ${
       active
         ? "bg-ink text-white shadow-sm"
         : "bg-white/80 text-graphite border border-bone hover:bg-white hover:text-ink"
     }`}
   >
     {icon}
-    <span className="hidden sm:inline">{label}</span>
+    <span className="hidden sm:inline short:hidden">{label}</span>
   </button>
 );
 

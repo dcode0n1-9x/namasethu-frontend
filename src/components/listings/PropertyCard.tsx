@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Heart, ShieldCheck, TriangleAlert, CircleCheck } from "lucide-react";
 import { PropertyListing } from "@/types/property";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface PropertyCardProps {
   property: PropertyListing;
@@ -14,6 +15,7 @@ interface PropertyCardProps {
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80";
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({ property, isHighlighted = false, onHover }) => {
+  const { formatListing } = useCurrency();
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isHeartAnimating, setIsHeartAnimating] = useState(false);
@@ -39,9 +41,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, isHighligh
   return (
     <article onMouseEnter={() => onHover?.(property.id)} onMouseLeave={() => onHover?.(null)} className="group relative flex flex-col">
       <div
-        className={`relative mb-3 aspect-[4/3] w-full overflow-hidden rounded-2xl bg-neutral-100 transition-shadow ${
-          isHighlighted ? "ring-2 ring-ink ring-offset-2" : ""
-        }`}
+        className={"relative mb-3 aspect-[4/3] w-full overflow-hidden rounded-2xl bg-neutral-100 transition-shadow"}
       >
         <Link href={href} tabIndex={-1} aria-hidden="true" className="absolute inset-0">
           <img
@@ -120,7 +120,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, isHighligh
         </p>
 
         <p className="pt-1.5">
-          <span className="font-semibold tabular-nums text-ink">{property.formattedPrice}</span>
+          <span className="font-semibold tabular-nums text-ink">{formatListing(property.pricePaise, property.listingMode)}</span>
           {discount < 0 ? (
             <span className="ml-2 text-sm font-medium text-verified">{Math.abs(discount)}% below estimate</span>
           ) : (

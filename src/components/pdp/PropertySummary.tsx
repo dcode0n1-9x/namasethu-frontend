@@ -5,6 +5,7 @@ import { BadgeCheck, Check, Copy, MapPin, ShieldCheck } from "lucide-react";
 import { PropertyListing } from "@/types/property";
 import { ContactActions } from "./ContactActions";
 import { PriceBand, PriceStatus } from "./ValuationCard";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface PropertySummaryProps {
   property: PropertyListing;
@@ -14,6 +15,7 @@ interface PropertySummaryProps {
 }
 
 export const PropertySummary: React.FC<PropertySummaryProps> = ({ property, isUnlocked, onUnlockClick, onLaunch3d }) => {
+  const { formatListing } = useCurrency();
   const [copied, setCopied] = useState(false);
 
   const copyUlpin = () => {
@@ -88,7 +90,7 @@ export const PropertySummary: React.FC<PropertySummaryProps> = ({ property, isUn
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
             <p className="text-xs font-medium text-muted">{property.listingMode === "RENT" ? "Monthly rent" : "Asking price"}</p>
-            <p className="font-display text-3xl font-bold tabular-nums leading-tight text-ink">{property.formattedPrice}</p>
+            <p className="font-display text-3xl font-bold tabular-nums leading-tight text-ink">{formatListing(property.pricePaise, property.listingMode, false)}</p>
             {property.pricePerSqft && <p className="text-xs text-muted">{property.pricePerSqft}</p>}
           </div>
           <PriceStatus diff={property.valuation.differencePercentage} />

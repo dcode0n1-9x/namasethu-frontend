@@ -7,6 +7,8 @@ import { Building2, Check, Globe, Heart, HelpCircle, KeyRound, Menu, User } from
 import { ListingMode } from "@/types/property";
 import { BrandLogo } from "./BrandLogo";
 import { Dialog } from "@/components/ui/Dialog";
+import { useCurrency } from "@/context/CurrencyContext";
+import { CurrencyCode } from "@/lib/currency";
 
 interface GlobalHeaderProps {
   /** Highlighted discovery mode; omit on pages that aren't part of discovery. */
@@ -29,17 +31,17 @@ const LANGUAGES = [
 
 const CURRENCIES = [
   { code: "INR", symbol: "₹", label: "Indian rupee" },
+  { code: "AED", symbol: "AED", label: "UAE dirham" },
   { code: "USD", symbol: "$", label: "US dollar" },
   { code: "EUR", symbol: "€", label: "Euro" },
-  { code: "AED", symbol: "د.إ", label: "UAE dirham" },
 ];
 
 export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ activeMode, onModeChange }) => {
   const router = useRouter();
+  const { currency, setCurrency, activeConfig } = useCurrency();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [language, setLanguage] = useState("en-IN");
-  const [currency, setCurrency] = useState("INR");
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -69,7 +71,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ activeMode, onModeCh
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-hairline bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-20 max-w-[1760px] items-center justify-between gap-4 px-4 sm:px-8 md:px-12">
-        <BrandLogo />
+        <BrandLogo isHeader />
 
         <nav aria-label="Browse homes" className="hidden items-center gap-1 md:flex">
           {MODES.map((mode) => {
@@ -114,7 +116,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ activeMode, onModeCh
             aria-label="Language and currency"
           >
             <Globe className="h-4 w-4" />
-            <span className="hidden text-xs font-semibold sm:inline">{currencySymbol}</span>
+            <span className="hidden text-xs font-semibold sm:inline">{currency} · {currencySymbol}</span>
           </button>
 
           <div ref={menuRef} className="relative">
@@ -210,7 +212,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ activeMode, onModeCh
                 <OptionTile
                   key={curr.code}
                   selected={currency === curr.code}
-                  onSelect={() => setCurrency(curr.code)}
+                  onSelect={() => setCurrency(curr.code as CurrencyCode)}
                   title={`${curr.code} – ${curr.symbol}`}
                   subtitle={curr.label}
                 />
