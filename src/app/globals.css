@@ -1,0 +1,250 @@
+@import "tailwindcss";
+
+/* Design tokens ("Sovereign Trust"): slate navy for text and primary actions,
+   terracotta for transactional accents, teal for anything verified. Use
+   `bg-brand`, `text-ink`, `text-verified`, `bg-surface` etc. rather than
+   hard-coded hex values. */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "Cascadia Mono", Consolas, monospace;
+
+  --color-brand: #c2410c;
+  --color-brand-hover: #9a3412;
+  --color-brand-soft: #fff7ed;
+  --color-ink: #0f172a;
+  --color-ink-soft: #1e293b;
+  --color-muted: #64748b;
+  --color-hairline: #e2e8f0;
+  --color-surface: #f8fafc;
+  --color-surface-2: #f1f5f9;
+  --color-verified: #0f766e;
+  --color-verified-strong: #0d9488;
+  --color-verified-soft: #f0fdfa;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: #fff;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  /* Lock page scroll while a modal <dialog> is open. */
+  html:has(dialog[open]:modal) {
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 150ms, border-color 150ms, color 150ms, box-shadow 150ms, transform 100ms;
+  }
+  .btn:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+  .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+  .btn-primary {
+    background-color: var(--color-brand);
+    color: #fff;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-brand-hover);
+  }
+  .btn-dark {
+    background-color: var(--color-ink);
+    color: #fff;
+  }
+  .btn-dark:hover:not(:disabled) {
+    background-color: var(--color-ink-soft);
+  }
+  .btn-outline {
+    background-color: #fff;
+    color: var(--color-ink);
+    box-shadow: inset 0 0 0 1px #cbd5e1;
+  }
+  .btn-outline:hover:not(:disabled) {
+    box-shadow: inset 0 0 0 1px var(--color-ink);
+    background-color: #fafafa;
+  }
+  .btn-sm {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
+    border-radius: 0.5rem;
+  }
+
+  /* Monospace ID chip for ULPIN / RERA / document numbers. */
+  .id-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 0.375rem;
+    background-color: var(--color-ink);
+    color: #f8fafc;
+    padding: 0.25rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+
+  /* Soft teal status pill for verified states. */
+  .pill-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: 9999px;
+    background-color: var(--color-verified-soft);
+    color: var(--color-verified);
+    box-shadow: inset 0 0 0 1px rgb(13 148 136 / 0.25);
+    padding: 0.125rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Level-1 structural card. */
+  .panel {
+    border-radius: 1rem;
+    background-color: #fff;
+    border: 1px solid var(--color-hairline);
+    box-shadow: 0 1px 3px 0 rgb(15 23 42 / 0.04), 0 1px 2px -1px rgb(15 23 42 / 0.02);
+  }
+
+  /* Small uppercase section label. */
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /* Selectable chip used by filters and pickers. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 9999px;
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-ink);
+    background-color: #fff;
+    box-shadow: inset 0 0 0 1px #cbd5e1;
+    cursor: pointer;
+    transition: box-shadow 150ms, background-color 150ms, color 150ms;
+  }
+  .chip:hover {
+    box-shadow: inset 0 0 0 1px var(--color-ink);
+  }
+  .chip[aria-pressed="true"] {
+    background-color: var(--color-ink);
+    color: #fff;
+    box-shadow: inset 0 0 0 1px var(--color-ink);
+  }
+
+  /* Native modal dialog shell (see components/ui/Dialog.tsx). */
+  .ui-dialog {
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 1rem;
+    background: #fff;
+    color: var(--color-ink);
+    width: calc(100% - 2rem);
+    max-height: calc(100dvh - 2rem);
+    box-shadow: 0 20px 25px -5px rgb(15 23 42 / 0.12), 0 8px 10px -6px rgb(15 23 42 / 0.08);
+    overflow: hidden;
+  }
+  .ui-dialog[open] {
+    display: flex;
+    flex-direction: column;
+    animation: dialog-in 180ms cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+  .ui-dialog::backdrop {
+    background-color: rgb(15 23 42 / 0.5);
+    backdrop-filter: blur(2px);
+  }
+  .ui-dialog[data-variant="fullscreen"] {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    background: #0b0b0b;
+    color: #fff;
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.animate-heart-pop {
+  animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.floating-shadow {
+  box-shadow: 0 4px 6px -1px rgb(15 23 42 / 0.06), 0 10px 24px -4px rgb(15 23 42 / 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
