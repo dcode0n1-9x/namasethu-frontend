@@ -81,7 +81,7 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
       historicalTransactionsCount: 14,
     },
     deedHistory: [
-      { year: "2026", eventType: "INSPECTION_AUDIT", title: "80-Point Physical Civil & Spatial Twin Audit", parties: "Namasthetu Engineering Bureau", status: "VERIFIED" },
+      { year: "2026", eventType: "INSPECTION_AUDIT", title: "80-Point Physical Civil & Spatial Twin Audit", parties: "Amberstone Engineering Bureau", status: "VERIFIED" },
       { year: "2023", eventType: "ULPIN_SEEDED", title: "Digitized Cadastral Seeding (ULPIN 2919-0412-8831-01)", parties: "Kaveri 2.0 Karnataka Revenue Dept", status: "VERIFIED" },
       { year: "2019", eventType: "ENCUMBRANCE_CLEARED", title: "Mortgage Satisfaction & NOC Certificate", parties: "HDFC Bank Ltd → Owner", status: "CLEARED" },
       { year: "2016", eventType: "SALE_DEED", title: "Registered Absolute Sale Deed (Doc #4928/2016)", parties: "Sobha Developers Ltd → S. Venkatraman", volumeNumber: "Vol 412, Pgs 88-104", status: "VERIFIED" },
@@ -193,7 +193,7 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
       historicalTransactionsCount: 8,
     },
     deedHistory: [
-      { year: "2026", eventType: "INSPECTION_AUDIT", title: "Civil 80-Pt Audit & 3D Spatial Capture", parties: "Namasthetu Physical Assurance", status: "VERIFIED" },
+      { year: "2026", eventType: "INSPECTION_AUDIT", title: "Civil 80-Pt Audit & 3D Spatial Capture", parties: "Amberstone Physical Assurance", status: "VERIFIED" },
       { year: "2024", eventType: "ULPIN_SEEDED", title: "Cadastral Geo-boundary Verified", parties: "Karnataka Land Records", status: "VERIFIED" },
       { year: "2018", eventType: "SALE_DEED", title: "Absolute Sale Deed (Registered)", parties: "Prestige Estates Projects Ltd → Dr. Ananya Sen", status: "VERIFIED" },
     ],
@@ -301,7 +301,7 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
       historicalTransactionsCount: 19,
     },
     deedHistory: [
-      { year: "2026", eventType: "INSPECTION_AUDIT", title: "80-Point Structural & Spatial Twin Verified", parties: "Namasthetu Physical Assurance", status: "VERIFIED" },
+      { year: "2026", eventType: "INSPECTION_AUDIT", title: "80-Point Structural & Spatial Twin Verified", parties: "Amberstone Physical Assurance", status: "VERIFIED" },
       { year: "2021", eventType: "SALE_DEED", title: "Registered Deed of Conveyance", parties: "Lodha World Crest P Ltd → Cyrus Mistry Trust", volumeNumber: "BOM-4281", status: "VERIFIED" },
     ],
     owner: {
@@ -407,7 +407,7 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
       historicalTransactionsCount: 11,
     },
     deedHistory: [
-      { year: "2026", eventType: "INSPECTION_AUDIT", title: "Namasthetu Physical & 3D Spatial Audit", parties: "Namasthetu Field Assurance", status: "VERIFIED" },
+      { year: "2026", eventType: "INSPECTION_AUDIT", title: "Amberstone Physical & 3D Spatial Audit", parties: "Amberstone Field Assurance", status: "VERIFIED" },
       { year: "2023", eventType: "ULPIN_SEEDED", title: "Kaveri 2.0 Cadastral Parcel ID Mapped", parties: "Govt of Karnataka", status: "VERIFIED" },
       { year: "2017", eventType: "SALE_DEED", title: "Original Tripartite Sale Agreement", parties: "Total Environment Building Systems → R. Jayashankar", status: "VERIFIED" },
     ],
@@ -507,7 +507,7 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
       historicalTransactionsCount: 22,
     },
     deedHistory: [
-      { year: "2026", eventType: "INSPECTION_AUDIT", title: "Rental Handover Civil & Appliance Audit", parties: "Namasthetu Inspection Team", status: "VERIFIED" },
+      { year: "2026", eventType: "INSPECTION_AUDIT", title: "Rental Handover Civil & Appliance Audit", parties: "Amberstone Inspection Team", status: "VERIFIED" },
       { year: "2022", eventType: "KHATA_TRANSFER", title: "BBMP e-Khata Certificate (PID 082-W0014)", parties: "Bruhat Bengaluru Mahanagara Palike", status: "VERIFIED" },
     ],
     owner: {
@@ -606,7 +606,7 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
       historicalTransactionsCount: 26,
     },
     deedHistory: [
-      { year: "2026", eventType: "INSPECTION_AUDIT", title: "80-Point Physical Verification Audit", parties: "Namasthetu Civil Engineers", status: "VERIFIED" },
+      { year: "2026", eventType: "INSPECTION_AUDIT", title: "80-Point Physical Verification Audit", parties: "Amberstone Civil Engineers", status: "VERIFIED" },
       { year: "2015", eventType: "SALE_DEED", title: "Absolute Sale Deed", parties: "Brigade Enterprises Ltd → Murali Krishnan", status: "VERIFIED" },
     ],
     owner: {
@@ -709,7 +709,7 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
       historicalTransactionsCount: 15,
     },
     deedHistory: [
-      { year: "2026", eventType: "INSPECTION_AUDIT", title: "80-Point Civil & Digital Twin Inspection", parties: "Namasthetu Assurance", status: "VERIFIED" },
+      { year: "2026", eventType: "INSPECTION_AUDIT", title: "80-Point Civil & Digital Twin Inspection", parties: "Amberstone Assurance", status: "VERIFIED" },
       { year: "2020", eventType: "SALE_DEED", title: "Registered Deed of Conveyance", parties: "Oberoi Realty Ltd → Rajesh Poddar", status: "VERIFIED" },
     ],
     owner: {
@@ -807,7 +807,7 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
       historicalTransactionsCount: 17,
     },
     deedHistory: [
-      { year: "2026", eventType: "INSPECTION_AUDIT", title: "Civil 80-Pt & Zero-Seepage Audit", parties: "Namasthetu Field Assurance", status: "VERIFIED" },
+      { year: "2026", eventType: "INSPECTION_AUDIT", title: "Civil 80-Pt & Zero-Seepage Audit", parties: "Amberstone Field Assurance", status: "VERIFIED" },
       { year: "2019", eventType: "SALE_DEED", title: "Registered Absolute Sale Deed", parties: "Embassy Group → K. Radhakrishnan", status: "VERIFIED" },
     ],
     owner: {

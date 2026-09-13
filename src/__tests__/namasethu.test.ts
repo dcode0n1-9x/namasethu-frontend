@@ -2,7 +2,7 @@ import { describe, it, expect } from "bun:test";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { SearchFilters, PropertyListing } from "@/types/property";
 
-describe("Namasthetu Domain & Data Integrity", () => {
+describe("Amberstone Domain & Data Integrity", () => {
   it("should contain authentic verified properties across Bengaluru and Mumbai", () => {
     expect(MOCK_PROPERTIES.length).toBeGreaterThanOrEqual(8);
     const cities = new Set(MOCK_PROPERTIES.map((p) => p.city));
@@ -157,5 +157,35 @@ describe("AVM Valuation & Broker Savings Logic", () => {
 
     expect(propertyValue).toBe(25375000); // 2.5375 Cr
     expect(brokerSaved).toBe(508000); // 5.08 Lakhs saved
+  });
+});
+
+describe("Amberstone Brand & 3D Digital Twin Specification", () => {
+  it("should verify 3D digital twin spatial room telemetry integrity", () => {
+    const twinProps = MOCK_PROPERTIES.filter((p) => p.has3dTour && p.spatialRooms);
+    expect(twinProps.length).toBeGreaterThan(0);
+
+    for (const p of twinProps) {
+      expect(p.spatialRooms!.length).toBeGreaterThanOrEqual(2);
+      for (const room of p.spatialRooms!) {
+        expect(room.id).toBeTruthy();
+        expect(room.name).toBeTruthy();
+        expect(room.dimensions).toMatch(/\d+/);
+        expect(room.carpetSqft).toBeGreaterThan(0);
+        expect(room.floorType).toBeTruthy();
+        expect(room.highlight).toBeTruthy();
+      }
+    }
+  });
+
+  it("should verify all properties are associated with Amberstone verified title and ULPIN", () => {
+    for (const prop of MOCK_PROPERTIES) {
+      expect(prop.title).toBeTruthy();
+      expect(prop.carpetAreaSqft).toBeGreaterThan(0);
+      expect(prop.superBuiltUpAreaSqft).toBeGreaterThanOrEqual(prop.carpetAreaSqft);
+      expect(prop.inspection.activeLiens).toBe(false);
+      expect(prop.inspection.ulpin).toBe(prop.ulpin);
+      expect(prop.deedHistory.length).toBeGreaterThan(0);
+    }
   });
 });

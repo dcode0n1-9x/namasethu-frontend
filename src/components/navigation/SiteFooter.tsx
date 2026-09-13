@@ -37,8 +37,8 @@ export const SiteFooter: React.FC = () => (
         <div className="col-span-2">
           <BrandLogo />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted">
-            Verified homes, listed directly by their owners. Every property is inspected on-site by a
-            civil engineer and title-checked against state land records before it goes live.
+            Verified homes, listed directly by verified owners. Every property is inspected on-site by a
+            civil engineer, authenticated with 3D digital twins, and title-checked against state land records before it goes live.
           </p>
         </div>
 
@@ -59,8 +59,8 @@ export const SiteFooter: React.FC = () => (
       </div>
 
       <div className="mt-12 flex flex-col gap-3 border-t border-hairline pt-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
-        <p>© 2026 Namasthetu Technologies Pvt. Ltd.</p>
-        <p>Operating in Bengaluru &amp; Mumbai · RERA-compliant · DPDP Act 2023</p>
+        <p>© 2026 Amberstone Technologies Pvt. Ltd. All rights reserved.</p>
+        <p>Operating in Bengaluru, Mumbai &amp; New Delhi · Real Estate Operating System · RERA-compliant · DPDP Act 2023</p>
       </div>
     </div>
   </footer>

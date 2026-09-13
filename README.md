@@ -1,12 +1,12 @@
-# Namasthetu Frontend Web — Airbnb-Grade Real Estate Discovery & Property Intelligence Operating System
+# Amberstone Frontend Web — Airbnb-Grade Real Estate Discovery & Property Intelligence Operating System
 
-Namasthetu is India's Property Intelligence Operating System, anchored to 14-digit **ULPIN** (Unique Land Parcel Identification Number) cadastral records and mandatory **80-point physical civil engineer audits**. This frontend matches the 1:1 design and UX patterns of **Airbnb** (`airbnb.co.in`), transforming the broken broker lead-generation model into an editorial, visual-first discovery experience.
+Amberstone is India's Property Intelligence Operating System, anchored to 14-digit **ULPIN** (Unique Land Parcel Identification Number) cadastral records and mandatory **80-point physical civil engineer audits**. This frontend matches the 1:1 design and UX patterns of **Airbnb** (`airbnb.co.in`), transforming the broken broker lead-generation model into an editorial, visual-first discovery experience.
 
 ---
 
 ## 1. Core Architecture & UX Alignment (1:1 Airbnb Parity)
 
-| Airbnb UX Pattern | Namasthetu Implementation | Component |
+| Airbnb UX Pattern | Amberstone Implementation | Component |
 | :--- | :--- | :--- |
 | **Floating Expandable Pill Search Bar** | Where (Locality / ULPIN) · Timeline · Config & Budget (BHK / Max ₹) | [`ExpandablePillSearch.tsx`](src/components/navigation/ExpandablePillSearch.tsx) |
 | **Horizontal Category Rail with Paddles** | Direct Owner, 3D Twins, Top AVM Deals, Trust Pass Elite, Gated Societies, RERA Approved | [`CategoryRail.tsx`](src/components/navigation/CategoryRail.tsx) |
@@ -41,10 +41,10 @@ Namasthetu is India's Property Intelligence Operating System, anchored to 14-dig
   - PostGIS neighbourhood radius metrics (Metro distance, schools, hospitals, water security).
   - Sticky reservation/escrow card with instant Trust Pass unlock modal simulation.
 
-- **`/list-property` — Owner Onboarding Landing ("Namasthetu Your Property"):**
+- **`/list-property` — Owner Onboarding Landing ("Amberstone Your Property"):**
   - Interactive AVM fair market valuation & rental yield calculator.
   - 3-step guided visualizer (DigiLocker deed match -> 24h civil engineer dispatch -> verified buyer token escrow).
-  - Comprehensive comparison matrix (Namasthetu vs 99acres/Magicbricks vs Local Street Brokers).
+  - Comprehensive comparison matrix (Amberstone vs 99acres/Magicbricks vs Local Street Brokers).
 
 - **`/trust-pass` — Trust Pass Pricing & Entitlements Dashboard:**
   - Single PIP Pass (₹299) vs Monthly All-Access Pass (₹999/mo).

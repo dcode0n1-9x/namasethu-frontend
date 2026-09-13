@@ -25,7 +25,7 @@ export const ContactActions: React.FC<ContactActionsProps> = ({ property, isUnlo
   const rawWa = property.owner.unredactedWhatsApp || property.owner.unredactedPhone || "";
   const digitsOnly = rawWa.replace(/\D/g, "");
   const waNumber = digitsOnly.startsWith("91") ? digitsOnly : `91${digitsOnly}`;
-  const waText = encodeURIComponent(`Hi ${property.owner.fullName}, I'm interested in ${property.title} on Namasthetu.`);
+  const waText = encodeURIComponent(`Hi ${property.owner.fullName}, I'm interested in ${property.title} on Amberstone.`);
   const waHref = `https://wa.me/${waNumber}?text=${waText}`;
 
   const openVisit = () => {
@@ -38,7 +38,7 @@ export const ContactActions: React.FC<ContactActionsProps> = ({ property, isUnlo
       open={visitOpen}
       onClose={() => setVisitOpen(false)}
       title="Book a site visit"
-      description="A Namasthetu engineer joins you on the visit at no extra cost."
+      description="An Amberstone engineer joins you on the visit at no extra cost."
       size="sm"
     >
       {visitBooked ? (

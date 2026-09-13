@@ -112,7 +112,15 @@ export default function PropertyDetailPage({ params }: PropertyPageProps) {
 
         {property.has3dTour && (
           <div id="tour" className="mt-6 scroll-mt-28">
-            <ThreeTwinViewer rooms={property.spatialRooms} propertyTitle={property.title} />
+            <ThreeTwinViewer
+              rooms={property.spatialRooms}
+              propertyTitle={property.title}
+              conditionScore={Math.round((property.inspection.scores.composite / 10) * 10) / 10}
+              carpetSqft={property.carpetAreaSqft}
+              builtUpSqft={property.superBuiltUpAreaSqft}
+              efficiency={Math.round((property.carpetAreaSqft / property.superBuiltUpAreaSqft) * 100)}
+              orientation={property.facing}
+            />
           </div>
         )}
 

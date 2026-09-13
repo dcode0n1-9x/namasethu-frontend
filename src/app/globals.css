@@ -7,20 +7,30 @@
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), "Fraunces", Georgia, serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "Cascadia Mono", Consolas, monospace;
 
-  --color-brand: #c2410c;
-  --color-brand-hover: #9a3412;
-  --color-brand-soft: #fff7ed;
-  --color-ink: #0f172a;
-  --color-ink-soft: #1e293b;
+  --color-brand: #d97706;
+  --color-brand-hover: #b45309;
+  --color-brand-soft: #fef3c7;
+  --color-champagne: #c9a66b;
+  --color-champagne-light: #fcd34d;
+  --color-champagne-dark: #b45309;
+  --color-cream: #faf7f0;
+  --color-cream-2: #f5f1e8;
+  --color-ink: #1a1a1f;
+  --color-ink-soft: #2e2e38;
+  --color-graphite: #3a3a44;
+  --color-smoke: #78716c;
+  --color-mist: #a8a29e;
+  --color-bone: #e7e5e0;
   --color-muted: #64748b;
   --color-hairline: #e2e8f0;
-  --color-surface: #f8fafc;
-  --color-surface-2: #f1f5f9;
-  --color-verified: #0f766e;
-  --color-verified-strong: #0d9488;
-  --color-verified-soft: #f0fdfa;
+  --color-surface: #faf9f6;
+  --color-surface-2: #f5f1e8;
+  --color-verified: #047857;
+  --color-verified-strong: #10b981;
+  --color-verified-soft: #d1fae5;
 }
 
 @layer base {

@@ -19,7 +19,7 @@ const EVENT_LABEL: Record<DeedEvent["eventType"], string> = {
   KHATA_TRANSFER: "Khata transfer",
   ENCUMBRANCE_CLEARED: "Loan closure",
   ULPIN_SEEDED: "Land record digitised",
-  INSPECTION_AUDIT: "Namasthetu inspection",
+  INSPECTION_AUDIT: "Amberstone inspection",
 };
 
 export const EncumbranceDeedChain: React.FC<EncumbranceDeedChainProps> = ({

@@ -135,7 +135,7 @@ export default function ListPropertyPage() {
 
       <section className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8 sm:py-20">
         <p className="eyebrow">Compare</p>
-        <h2 className="mt-2 text-3xl font-bold text-ink">Why owners choose Namasthetu</h2>
+        <h2 className="mt-2 text-3xl font-bold text-ink">Why owners choose Amberstone</h2>
         <p className="mt-2 max-w-2xl text-[15px] text-muted">
           Portals and brokers earn from leads. We earn when buyers trust what they see, so every listing is verified first.
         </p>
